@@ -1,13 +1,14 @@
+// eslint-disable-next-line strict
+"use strict";
 window.addEventListener("DOMContentLoaded", () => {
-    function countTimer(deadline) {
+    const countTimer = deadline => {
         const timerHours = document.querySelector("#timer-hours"),
             timerMinutes = document.querySelector("#timer-minutes"),
             timerSeconds = document.querySelector("#timer-seconds"),
             timerNumbers = document.querySelector(".timer-numbers"),
-            span = timerNumbers.querySelectorAll("span"),
             timerAction = document.querySelector(".timer-action");
 
-        function getTimeRemaining() {
+        const getTimeRemaining = () => {
             const dateStop = new Date(deadline).getTime(),
                 dateNow = new Date().getTime(),
                 timeRemaining = (dateStop - dateNow) / 1000,
@@ -15,10 +16,9 @@ window.addEventListener("DOMContentLoaded", () => {
                 minutes = Math.floor((timeRemaining / 60) % 60),
                 hours = Math.floor(timeRemaining / 60 / 60);
             return { timeRemaining, seconds, minutes, hours };
-        }
-        const timeInterval = setInterval(updateClock, 1000);
+        };
 
-        function correctTimer(element) {
+        const correctTimer = element => {
             const arr = element + "";
             let result = [];
             for (let i = 0; i < arr.length; i++) {
@@ -33,42 +33,79 @@ window.addEventListener("DOMContentLoaded", () => {
                 result.join("");
             }
             return result.join("");
-        }
+        };
 
-        function updateClock() {
+        const updateClock = () => {
             const time = getTimeRemaining();
             timerHours.textContent = correctTimer(time.hours) + "ч";
             timerMinutes.textContent = correctTimer(time.minutes) + "м";
             timerSeconds.textContent = correctTimer(time.seconds) + "с";
-            console.log('timerSeconds: ', timerSeconds);
-
             if (time.timeRemaining <= 0) {
                 timerNumbers.style.color = "#ff5453";
                 timerAction.textContent = " Акция закончилась";
-                clearInterval(timeInterval);
+                clearInterval();
                 timerHours.textContent = "00";
                 timerMinutes.textContent = "00";
                 timerSeconds.textContent = "00";
             }
+        };
+        setInterval(updateClock, 1000);
+    };
+    countTimer("24 November 2020");
+    //Menu
+
+    const toggleMenu = () => {
+        const btnMenu = document.querySelector(".menu"),
+            menu = document.querySelector("menu"),
+            closeBtn = document.querySelector(".close-btn"),
+            menuItems = menu.querySelectorAll("ul>li");
+
+        const handlerMenu = () => menu.classList.toggle("active-menu");
+        btnMenu.addEventListener("click", handlerMenu);
+        closeBtn.addEventListener("click", handlerMenu);
+        menuItems.forEach(item => item.addEventListener("click", handlerMenu));
+    };
+    toggleMenu();
+
+    const togglePopup = () => {
+        const popup = document.querySelector(".popup"),
+            popupBtn = document.querySelectorAll(".popup-btn"),
+            closePopup = document.querySelector(".popup-close");
+
+        closePopup.addEventListener("click", () => popup.style.display = "none");
+        popupBtn.forEach(item => {
+
+            item.addEventListener("click", () => {
+                const screeWidth = document.documentElement.clientWidth;
+                let count = -100;
+                const popupAnimate = setInterval(() => {
+                    popup.style.transform = "translateY(-100%)";
+                    popup.style.display = "block";
+                    count++;
+                    popup.style.transform = `translateY(${count}%)`;
+
+                    if (count === 0 || screeWidth < 768) {
+                        clearInterval(popupAnimate);
+                        popup.style.transform = "translateY(0)";
+                    }
+                }, 0);
+            });
+        });
+    };
+    togglePopup();
+
+    const scroll = () => {
+        const anchors = document.querySelectorAll('a[href^="#"]');
+        for (const anchor of anchors) {
+            anchor.addEventListener("click", e => {
+                e.preventDefault();
+                const goto = anchor.hasAttribute('href') ? anchor.getAttribute('href') : 'body';
+                document.querySelector(goto).scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            });
         }
-
-    }
-    countTimer("22 November 2020");
+    };
+    scroll();
 });
-
-/*
-  Таймер (Алгоритм действий )
-
-  Подключаем JS
-  2 - навешиваем событие DOMContentLoaded (Ждет пока прогрузиться DOM дерево)
-  3 - Высчитываем миллисекунды текущего времени и дедлайна через метод setTime()
-  4 - после того как узнал миллисекунды нужно узнать промежуток между ними так же
-  в миллисекундах
-  5 - и с этим промежутком высчитываем секунды минуты часы дни годы все что нужно
-  полученные миллисекунтды мы делим на 1000 чтобы получить секунды  при вычислениях конечно же округляем методом Math.floor()
-  5 Секунды - миллисекунды % 60
-  6 Минуты - (миллисекунтды / 60) % 60
-  7 Часы - (миллисекунды / 60 / 60)
-
-  и их присваиваем к элементам на странице
-*/

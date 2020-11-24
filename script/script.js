@@ -52,41 +52,43 @@ window.addEventListener("DOMContentLoaded", () => {
         };
         setInterval(updateClock, 1000);
     };
-    countTimer("24 November 2020");
+    countTimer("26 November 2020");
     //Menu
 
     const toggleMenu = () => {
-        const btnMenu = document.querySelector(".menu"),
-            menu = document.querySelector("menu");
+        const menu = document.querySelector("menu"),
+            body = document.querySelector("body");
 
-        btnMenu.addEventListener("click", () => {
-            menu.classList.add("active-menu");
-        });
-        menu.addEventListener("click", event => {
+        body.addEventListener("click", event => {
             const target = event.target;
+
             if (target.matches(".beforeBgc")) {
                 menu.classList.remove("active-menu");
+            } else if (target.closest(".menu")) {
+                menu.classList.add("active-menu");
             }
         });
     };
     toggleMenu();
+
     const togglePopup = () => {
         const popup = document.querySelector(".popup"),
-            popupBtn = document.querySelectorAll(".popup-btn");
+            popupBtn = document.querySelectorAll(".popup-btn"),
+            popupContent = document.querySelector(".popup-content");
 
         popupBtn.forEach(item => {
             item.addEventListener("click", () => {
                 const screeWidth = document.documentElement.clientWidth;
                 let count = -100;
                 const popupAnimate = setInterval(() => {
-                    popup.style.transform = "translateY(-100%)";
+                    popupContent.style.transform = `translateY(${count}%)`;
+                    popupContent.style.display = "block";
                     popup.style.display = "block";
                     count++;
-                    popup.style.transform = `translateY(${count}%)`;
+                    popupContent.style.transform = `translateY(${count}%)`;
 
                     if (count === 0 || screeWidth < 768) {
                         clearInterval(popupAnimate);
-                        popup.style.transform = "translateY(0)";
                     }
                 }, 0);
             });
@@ -159,12 +161,14 @@ window.addEventListener("DOMContentLoaded", () => {
             dots = document.querySelector(".portfolio-dots"),
             slider = document.querySelector(".portfolio-content");
 
-        for (let i = 0; i < slide.length; i++) {
-            dots.innerHTML += "<li class='dot'></li>";
-        }
-        const dot = document.querySelectorAll(".dot");
         let currentSlide = 0,
             interval;
+        for (let i = 0; i < slide.length; i++) {
+            dots.innerHTML += "<li class='dot'></li>";
+            const dot = document.querySelectorAll(".dot");
+            if (dot[0]) { dot[0].classList.add("dot-active"); }
+        }
+        const dot = document.querySelectorAll(".dot");
 
         const prevSlide = (elem, index, strClass) => {
             elem[index].classList.remove(strClass);
@@ -173,11 +177,14 @@ window.addEventListener("DOMContentLoaded", () => {
         const nextSlide = (elem, index, strClass) => {
             elem[index].classList.add(strClass);
         };
+
         const autoPlaySlide = () => {
             prevSlide(slide, currentSlide, "portfolio-item-active");
             prevSlide(dot, currentSlide, "dot-active");
             currentSlide++;
-            if (currentSlide >= slide.length) { currentSlide = 0; }
+            if (currentSlide >= slide.length) {
+                currentSlide = 0;
+            }
             nextSlide(dot, currentSlide, "dot-active");
             nextSlide(slide, currentSlide, "portfolio-item-active");
         };

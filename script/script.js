@@ -1,5 +1,3 @@
-/* eslint-disable no-loop-func */
-// eslint-disable-next-line strict
 "use strict";
 window.addEventListener("DOMContentLoaded", () => {
     const countTimer = deadline => {
@@ -52,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
         };
         setInterval(updateClock, 1000);
     };
-    countTimer("26 November 2020");
+    countTimer("8 Dec 2020");
     //Menu
 
     const toggleMenu = () => {
@@ -74,7 +72,8 @@ window.addEventListener("DOMContentLoaded", () => {
     const togglePopup = () => {
         const popup = document.querySelector(".popup"),
             popupBtn = document.querySelectorAll(".popup-btn"),
-            popupContent = document.querySelector(".popup-content");
+            popupContent = document.querySelector(".popup-content"),
+            popupClosed = document.querySelector(".popup-close");
 
         popupBtn.forEach(item => {
             item.addEventListener("click", () => {
@@ -82,15 +81,28 @@ window.addEventListener("DOMContentLoaded", () => {
                 let count = -100;
                 const popupAnimate = setInterval(() => {
                     popupContent.style.transform = `translateY(${count}%)`;
+                    if (count === -50) {
+
+                    }
                     popupContent.style.display = "block";
                     popup.style.display = "block";
                     count++;
                     popupContent.style.transform = `translateY(${count}%)`;
-
-                    if (count === 0 || screeWidth < 768) {
+                    if (count === 0) {
                         clearInterval(popupAnimate);
-                    }
+                        popup.style.display = "block";
+                        popupContent.style.transform = "none";
+                    } 
                 }, 0);
+                if (screeWidth <= 768) {
+                    clearInterval(popupAnimate);
+                    popup.style.display = "block";
+                    popupContent.style.transform = "translateX(-50px)";
+                    popupClosed.style.border = "2px solid #bfbfbf";
+                    popupClosed.style.borderTop = "none";
+                    popupClosed.style.right = "1rem";
+                    popupClosed.style.width = "5rem";
+                }
             });
         });
         popup.addEventListener("click", event => {

@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
         };
         setInterval(updateClock, 1000);
     };
-    countTimer("8 Dec 2020");
+    countTimer("10 Dec 2020");
     //Menu
 
     const toggleMenu = () => {
@@ -253,4 +253,18 @@ window.addEventListener("DOMContentLoaded", () => {
         startSlide(2500);
     };
     slider();
+
+    // Калькулятор
+    const calculator = () => {
+        const calcSquare = document.querySelector(".calc-square"),
+            calcCount = document.querySelector(".calc-count"),
+            calcDay = document.querySelector(".calc-day");
+        const validation = (...valid) => {
+            valid.forEach(elem => {
+                elem.addEventListener("input", event => event.target.value = event.target.value.replace(/\D/gi, ""));
+            });
+        };
+        validation(calcSquare, calcCount, calcDay)
+    };
+    calculator();
 });

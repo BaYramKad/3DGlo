@@ -267,4 +267,19 @@ window.addEventListener("DOMContentLoaded", () => {
         validation(calcSquare, calcCount, calcDay)
     };
     calculator();
+
+    //Смена фото в блоке Команда
+
+    const changeImage = () => {
+        const comandPhoto = document.querySelectorAll(".command__photo");
+        comandPhoto.forEach(elem => {
+            let src = "";
+            elem.addEventListener("mouseenter", event => {
+                src = event.target.src;
+                event.target.src = elem.dataset.img;
+            });
+            elem.addEventListener("mouseleave", event => event.target.src = src);
+        });
+    };
+    changeImage();
 });

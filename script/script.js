@@ -1,5 +1,25 @@
 "use strict";
 window.addEventListener("DOMContentLoaded", () => {
+    // Валидация формы 
+    const validationForm = () => {
+        const formName = document.querySelector(".form-name"),
+            formPhone = document.querySelector(".form-phone");
+
+        const validsForm = (...valid) => {
+            valid.forEach(elem => {
+                elem.addEventListener("input", (event) => {
+                    if (elem.matches(".form-name")) {
+                        event.target.value = event.target.value.replace(/\d/g, "");
+                    } else if (elem.matches(".form-phone")) {
+                        event.target.value = event.target.value.replace(/[^\d].*/g, "");
+                    }
+                });
+            });
+        };
+        validsForm(formName, formPhone);
+    };
+    validationForm();
+
     const countTimer = deadline => {
         const timerHours = document.querySelector("#timer-hours"),
             timerMinutes = document.querySelector("#timer-minutes"),
@@ -50,7 +70,7 @@ window.addEventListener("DOMContentLoaded", () => {
         };
         setInterval(updateClock, 1000);
     };
-    countTimer("10 Dec 2020");
+    countTimer("12 Dec 2020");
     //Menu
 
     const toggleMenu = () => {
@@ -255,18 +275,51 @@ window.addEventListener("DOMContentLoaded", () => {
     slider();
 
     // Калькулятор
-    const calculator = () => {
+    const calculator = (price = 100) => {
         const calcSquare = document.querySelector(".calc-square"),
             calcCount = document.querySelector(".calc-count"),
-            calcDay = document.querySelector(".calc-day");
+            calcDay = document.querySelector(".calc-day"),
+            calcBlock = document.querySelector(".calc-block"),
+            calcType = document.querySelector(".calc-type"),
+            totalValue = document.getElementById("total");
+
         const validation = (...valid) => {
             valid.forEach(elem => {
                 elem.addEventListener("input", event => event.target.value = event.target.value.replace(/\D/gi, ""));
             });
         };
-        validation(calcSquare, calcCount, calcDay)
+        validation(calcSquare, calcCount, calcDay);
+
+        const countSum = () => {
+            let total = 0,
+             countValue = 1,
+             dayValue = 1;
+            const typeValue = +calcType.options[calcType.selectedIndex].value,
+                squarevalue = +calcSquare.value;
+
+                if (calcCount.value > 1) {
+                    countValue += (calcCount.value - 1) / 10;
+                }
+
+                if (calcDay.value && calcDay.value < 5) {
+                    dayValue *= 2;
+                } else if (calcDay.value && calcDay.value < 10) {
+                    dayValue *= 1.5;
+                }
+                if (typeValue && squarevalue) {
+                    total = price * typeValue * squarevalue * countValue * dayValue;
+                }
+            totalValue.textContent = total;
+        };
+        calcBlock.addEventListener("change", (event) => {
+            const target = event.target;
+            if (target.matches("select") || target.matches("input")) {
+                countSum();
+            }
+        });
+
     };
-    calculator();
+    calculator(100);
 
     //Смена фото в блоке Команда
 

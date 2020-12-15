@@ -1,4 +1,4 @@
-"use strict";
+
 window.addEventListener("DOMContentLoaded", () => {
     // Валидация формы 
     const validationForm = () => {
@@ -62,15 +62,15 @@ window.addEventListener("DOMContentLoaded", () => {
             if (time.timeRemaining <= 0) {
                 timerNumbers.style.color = "#ff5453";
                 timerAction.textContent = " Акция закончилась";
-                clearInterval();
+                clearInterval(intervalTime);
                 timerHours.textContent = "00";
                 timerMinutes.textContent = "00";
                 timerSeconds.textContent = "00";
             }
         };
-        setInterval(updateClock, 1000);
+        const intervalTime = setInterval(updateClock, 1000);
     };
-    countTimer("12 Dec 2020");
+    countTimer("16 Dec 2020");
     //Menu
 
     const toggleMenu = () => {
@@ -335,4 +335,57 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     };
     changeImage();
+
+    // Отправка на сервер
+
+    const sendForm = () => {
+        let form = document.getElementById("form1"), 
+            box = document.getElementById("box"),
+            div = document.createElement("div");
+        div.style.marginBottom = "20px";
+        div.style.fontSize = "20px";
+        div.style.color = "#2aff71";
+        box.style.marginBottom = "20px";
+
+        const erroeMessage = "Что то пошло не так",
+            succsessMessage = "Спасибо! Мы скоро с вами свяжемся!";
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            div.remove()
+            box.style.display = "flex";
+            ajaxRequest();
+        });
+
+        const ajaxRequest = () => {
+            const request = new XMLHttpRequest();
+            request.addEventListener("readystatechange", () => {
+                if (request.readyState === 4) {
+                    form.appendChild(div)
+                    div.textContent = succsessMessage;
+                    box.style.display = "none";
+                    reset();
+                } else {
+                    div.textContent = erroeMessage;
+                }
+            
+            })
+            request.open("POST", "./server.php");
+            request.setRequestHeader("Content-type", "multipart/form-data");
+            const form = document.getElementById("form1");
+            const formData = new FormData(form)
+            request.send(formData);
+        };
+
+        const reset = () => {
+            let form = document.getElementById("form1");
+            let elementsForm = form.elements;
+            for (let elem of elementsForm){
+                if (elem.value !== "" && elem.localName === "input") {
+                    elem.value = ""
+                };
+            }
+        };
+    };
+    sendForm();
 });

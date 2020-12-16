@@ -354,30 +354,33 @@ window.addEventListener("DOMContentLoaded", () => {
             event.preventDefault();
             div.remove()
             box.style.display = "flex";
-            ajaxRequest();
-        });
-
+            ajaxRequest()
+        })
         const ajaxRequest = () => {
-            const request = new XMLHttpRequest();
-            request.addEventListener("readystatechange", () => {
-                if (request.readyState === 4) {
-                    form.appendChild(div)
-                    div.textContent = succsessMessage;
-                    setTimeout(() => {
-                        div.textContent = "";
-                    }, 7000)
-                    box.style.display = "none";
-                    reset();
-                } else {
-                    div.textContent = erroeMessage;
-                }
-            
-            })
-            request.open("POST", "./server.php");
-            request.setRequestHeader("Content-type", "multipart/form-data");
-            const form = document.getElementById("form1");
-            const formData = new FormData(form)
-            request.send(formData);
+                const request = new XMLHttpRequest();
+                
+                request.addEventListener("readystatechange", () => {
+                    if (request.readyState !== 4) {
+                        return;
+                    }
+                    if (request.status === 200) {
+                        form.appendChild(div)
+                        div.textContent = succsessMessage;
+                        setTimeout(() => {
+                            div.textContent = "";
+                        }, 7000)
+                        box.style.display = "none";
+                        reset()
+                    } else {
+                        div.textContent = erroeMessage;
+                    }
+                });
+
+                request.open("POST", "./server/server.php");
+                request.setRequestHeader("Content-Type", "aplication/json");
+                const form = document.getElementById("form1");
+                const formData = new FormData(form);
+                request.send(formData);
         };
 
         const reset = () => {
@@ -392,66 +395,68 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     sendForm();
 
-    const doUniversity = (docs, solve, reject) => {
-        if (docs) {
-            console.log("Рассмотрение документов...");
-            setTimeout(() => {
-                let random = Math.random();
-                if (random > 0.5) {
-                    let disigion = "Принят";
-                    solve(disigion);
-                } else {
-                    reject("Отказано");
-                }
-            }, 2000)
-        } else {
-            reject("Отказано - Нет документов")
-        }
-    };
+    // const doUniversity = (docs) => {
+    //     return new Promise( (resolve, reject) => {
+    //         if (docs) {
+    //             console.log("Рассмотрение документов...");
+    //             setTimeout(() => {
+    //                 let random = Math.random();
+    //                 if (random > 0.5) {
+    //                     let disigion = "Принят";
+    //                     resolve(disigion);
+    //                 } else {
+    //                     reject("Отказано");
+    //                 }
+    //             }, 2000)
+    //         } else {
+    //             reject("Отказано - Нет документов")
+    //         }
+    //     });
+    // };
 
 
-    const doArmy = (docs, resolve, reject) => {
-        if (docs) {
-            console.log("Военкомат думает...");
-            setTimeout(() => {
-                if (docs === "Принят") {
-                    resolve("Отсрочка");
-                } else {
-                    reject("Повестка");
-                }
-            }, 2000)
-        } else {
-            reject("Повестка");
-        }
-    };
+    // const doArmy = (docs) => {
+    //     return new Promise( (resolve, reject) => {
+    //         if (docs) {
+    //             console.log("Военкомат думает...");
+    //             setTimeout(() => {
+    //                 if (docs === "Принят") {
+    //                     resolve("Отсрочка");
+    //                     console.log("Отсрочка");
+    //                 } else {
+    //                     reject("Повестка");
+    //                 }
+    //             }, 2000)
+    //         } else {
+    //             reject("Повестка");
+    //         }
+    //     });
+    // };
 
-    const doWork = (docs, resolve, reject) => {
-        if (docs) {
-            // console.log(docs);
-            console.log("Работодатель думает...");
-            setTimeout(() => {
-                let good = "Приглашение - выходи в субботу"
-                resolve(good)
-            }, 3000)
-        } else {
-            reject("ОТказано")
-        }
-    };
+    // const doWork = (docs) => {
+    //     return new Promise( (resolve, reject) => {
+    //         if (docs) {
+    //             console.log("Работодатель думает...");
+    //             setTimeout(() => {
+    //                 let good = "Приглашение - выходи в субботу"
+    //                 resolve(good)
+    //                 console.log(good);
+    //             }, 3000)
+    //         } else {
+    //             reject("ОТказано")
+    //         }
+    //     });
+    // };
 
-    const documents = ["Аттестат, Паспорт"]
-    doUniversity(documents, (result) => {
-        console.log(result);
-        doArmy(result, (multipart) => {
-        console.log(multipart);
-            doWork(result, (goods) => {
-                console.log(goods);
-            }, (badDisigin) => {
-                console.log(badDisigin);
-            })
-        }, (reason) => {
-            console.log(reason);
-        })
-    }, (reason) => {
-        console.error(reason);
-    })
+    // const documents = ["Аттестат, Паспорт"]
+    // doUniversity(documents)
+    //     .then((result) => {
+    //         console.log(result);
+    //         return result
+    //     }, (error) => {
+    //         console.error(error);
+    //     })
+    //     .then(doArmy)
+    //     .then(doWork)
+    //     .catch( (error) => console.log(error))
 });

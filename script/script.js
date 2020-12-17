@@ -349,30 +349,26 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const erroeMessage = "Что то пошло не так",
             succsessMessage = "Спасибо! Мы скоро с вами свяжемся!";
-
+            
         form.addEventListener("submit", (event) => {
             event.preventDefault();
             div.remove()
             box.style.display = "flex";
             ajaxRequest()
+                .then(interface)
+                .catch((error) => error = erroeMessage)
         })
         const ajaxRequest = () => {
+            return new Promise((resolve, reject) => {
                 const request = new XMLHttpRequest();
-                
                 request.addEventListener("readystatechange", () => {
                     if (request.readyState !== 4) {
                         return;
                     }
                     if (request.status === 200) {
-                        form.appendChild(div)
-                        div.textContent = succsessMessage;
-                        setTimeout(() => {
-                            div.textContent = "";
-                        }, 7000)
-                        box.style.display = "none";
-                        reset()
+                        resolve()
                     } else {
-                        div.textContent = erroeMessage;
+                        reject(div.textContent)
                     }
                 });
 
@@ -381,8 +377,20 @@ window.addEventListener("DOMContentLoaded", () => {
                 const form = document.getElementById("form1");
                 const formData = new FormData(form);
                 request.send(formData);
+            });
+                
         };
 
+        
+        const interface = () => {
+            form.appendChild(div)
+            div.textContent = succsessMessage;
+            setTimeout(() => {
+                div.textContent = "";
+            }, 7000)
+            box.style.display = "none";
+            reset()
+        };
         const reset = () => {
             let form = document.getElementById("form1");
             let elementsForm = form.elements;
@@ -394,69 +402,4 @@ window.addEventListener("DOMContentLoaded", () => {
         };
     };
     sendForm();
-
-    // const doUniversity = (docs) => {
-    //     return new Promise( (resolve, reject) => {
-    //         if (docs) {
-    //             console.log("Рассмотрение документов...");
-    //             setTimeout(() => {
-    //                 let random = Math.random();
-    //                 if (random > 0.5) {
-    //                     let disigion = "Принят";
-    //                     resolve(disigion);
-    //                 } else {
-    //                     reject("Отказано");
-    //                 }
-    //             }, 2000)
-    //         } else {
-    //             reject("Отказано - Нет документов")
-    //         }
-    //     });
-    // };
-
-
-    // const doArmy = (docs) => {
-    //     return new Promise( (resolve, reject) => {
-    //         if (docs) {
-    //             console.log("Военкомат думает...");
-    //             setTimeout(() => {
-    //                 if (docs === "Принят") {
-    //                     resolve("Отсрочка");
-    //                     console.log("Отсрочка");
-    //                 } else {
-    //                     reject("Повестка");
-    //                 }
-    //             }, 2000)
-    //         } else {
-    //             reject("Повестка");
-    //         }
-    //     });
-    // };
-
-    // const doWork = (docs) => {
-    //     return new Promise( (resolve, reject) => {
-    //         if (docs) {
-    //             console.log("Работодатель думает...");
-    //             setTimeout(() => {
-    //                 let good = "Приглашение - выходи в субботу"
-    //                 resolve(good)
-    //                 console.log(good);
-    //             }, 3000)
-    //         } else {
-    //             reject("ОТказано")
-    //         }
-    //     });
-    // };
-
-    // const documents = ["Аттестат, Паспорт"]
-    // doUniversity(documents)
-    //     .then((result) => {
-    //         console.log(result);
-    //         return result
-    //     }, (error) => {
-    //         console.error(error);
-    //     })
-    //     .then(doArmy)
-    //     .then(doWork)
-    //     .catch( (error) => console.log(error))
 });

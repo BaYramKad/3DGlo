@@ -2,21 +2,10 @@
 window.addEventListener("DOMContentLoaded", () => {
     // Валидация формы 
     const validationForm = () => {
-        const formName = document.querySelector(".form-name"),
-            formPhone = document.querySelector(".form-phone");
-
-        const validsForm = (...valid) => {
-            valid.forEach(elem => {
-                elem.addEventListener("input", (event) => {
-                    if (elem.matches(".form-name")) {
-                        event.target.value = event.target.value.replace(/\d/g, "");
-                    } else if (elem.matches(".form-phone")) {
-                        event.target.value = event.target.value.replace(/[^\d].*/g, "");
-                    }
-                });
+        const formName = document.querySelector(".form-name");
+            formName.addEventListener("input", event => {
+                event.target.value = event.target.value.replace(/\d/g, "");
             });
-        };
-        validsForm(formName, formPhone);
     };
     validationForm();
 
@@ -383,14 +372,17 @@ window.addEventListener("DOMContentLoaded", () => {
 
         
         const interface = () => {
-            form.appendChild(div)
-            div.textContent = succsessMessage;
             setTimeout(() => {
-                div.textContent = "";
-            }, 7000)
-            box.style.display = "none";
-            reset()
+                form.appendChild(div)
+                div.textContent = succsessMessage;
+                setTimeout(() => {
+                    div.textContent = "";
+                }, 7000)
+                box.style.display = "none";
+                reset()
+            }, 2000)
         };
+
         const reset = () => {
             let form = document.getElementById("form1");
             let elementsForm = form.elements;

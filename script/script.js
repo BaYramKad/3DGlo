@@ -9,10 +9,29 @@ window.addEventListener("DOMContentLoaded", () => {
     };
     validationForm();
 
+    // console.dir()
+    const returnAddTimer = () => {
+        const arr = new Date().toLocaleDateString().split(".")
+        const day = new Date().getDate() + 10;
+        arr.splice(0, 1, day)
+        const obj = {}
+        arr.forEach(() => {
+            obj.year = arr[2] * 1;
+            obj.month = arr[1] * 1;
+            obj.day = arr[0] * 1;
+        });
+        return {
+            year: obj.year,
+            month: obj.month,
+            day: obj.day
+        }
+    };
+
     const countTimer = deadline => {
-        const timerHours = document.querySelector("#timer-hours"),
-            timerMinutes = document.querySelector("#timer-minutes"),
-            timerSeconds = document.querySelector("#timer-seconds"),
+        const timerHours = document.getElementById("timer-hours"),
+            timerMinutes = document.getElementById("timer-minutes"),
+            timerSeconds = document.getElementById("timer-seconds"),
+            timerDays = document.getElementById("timer-days"),
             timerNumbers = document.querySelector(".timer-numbers"),
             timerAction = document.querySelector(".timer-action");
 
@@ -22,46 +41,40 @@ window.addEventListener("DOMContentLoaded", () => {
                 timeRemaining = (dateStop - dateNow) / 1000,
                 seconds = Math.floor(timeRemaining % 60),
                 minutes = Math.floor((timeRemaining / 60) % 60),
-                hours = Math.floor(timeRemaining / 60 / 60);
-            return { timeRemaining, seconds, minutes, hours };
+                hours = Math.floor(timeRemaining / 60 / 60) % 24,
+                days = Math.floor(timeRemaining / 60 / 60 / 24);
+            return { timeRemaining, seconds, minutes, hours, days };
         };
 
-        const correctTimer = element => {
-            const arr = element + "";
-            let result = [];
-            for (let i = 0; i < arr.length; i++) {
-                const hoursData = arr;
-                const concatArray = [];
-                result = [...hoursData.concat(concatArray)];
-            }
-            if (result.length === 2) {
-                result.join("");
-            } else if (result.length === 1) {
-                result.unshift("0");
-                result.join("");
-            }
-            return result.join("");
+        let intervalTime;
+        const correctTimer = n => {
+            if (n < 10) {
+                if (n < 0) {
+                    timerNumbers.style.color = "#ff5453";
+                    timerAction.textContent = " Акция закончилась";
+                    clearInterval(intervalTime);
+                    returnAddTimer();
+                    return "00";
+                }
+                return "0" + n;
+            } 
+            return n;
         };
 
         const updateClock = () => {
             const time = getTimeRemaining();
+            timerDays.textContent = correctTimer(time.days) + "д";
             timerHours.textContent = correctTimer(time.hours) + "ч";
             timerMinutes.textContent = correctTimer(time.minutes) + "м";
             timerSeconds.textContent = correctTimer(time.seconds) + "с";
-            if (time.timeRemaining <= 0) {
-                timerNumbers.style.color = "#ff5453";
-                timerAction.textContent = " Акция закончилась";
-                clearInterval(intervalTime);
-                timerHours.textContent = "00";
-                timerMinutes.textContent = "00";
-                timerSeconds.textContent = "00";
-            }
         };
-        const intervalTime = setInterval(updateClock, 1000);
-    };
-    countTimer("20 Dec 2020");
-    //Menu
 
+        intervalTime = setInterval(updateClock, 1000);
+    };
+    const timeNow = returnAddTimer()
+    countTimer(new Date(timeNow.year, timeNow.month, timeNow.day));
+
+    //Menu
     const toggleMenu = () => {
         const menu = document.querySelector("menu"),
             body = document.querySelector("body");
